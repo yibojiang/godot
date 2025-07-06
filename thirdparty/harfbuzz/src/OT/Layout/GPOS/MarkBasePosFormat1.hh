@@ -119,7 +119,7 @@ struct MarkBasePosFormat1_2
     /* Now we search backwards for a non-mark glyph.
      * We don't use skippy_iter.prev() to avoid O(n^2) behavior. */
 
-    hb_ot_apply_context_t::skipping_iterator_t &skippy_iter = c->iter_input;
+    auto &skippy_iter = c->iter_input;
     skippy_iter.set_lookup_props (LookupFlag::IgnoreMarks);
 
     if (c->last_base_until > buffer->idx)
@@ -197,9 +197,10 @@ struct MarkBasePosFormat1_2
     if (!out->markCoverage.serialize_serialize (c->serializer, new_coverage.iter ()))
       return_trace (false);
 
-    out->markArray.serialize_subset (c, markArray, this,
-                                     (this+markCoverage).iter (),
-                                     &klass_mapping);
+    if (unlikely (!out->markArray.serialize_subset (c, markArray, this,
+						    (this+markCoverage).iter (),
+						    &klass_mapping)))
+      return_trace (false);
 
     unsigned basecount = (this+baseArray).rows;
     auto base_iter =
@@ -228,11 +229,9 @@ struct MarkBasePosFormat1_2
       ;
     }
 
-    out->baseArray.serialize_subset (c, baseArray, this,
-                                     base_iter.len (),
-                                     base_indexes.iter ());
-
-    return_trace (true);
+    return_trace (out->baseArray.serialize_subset (c, baseArray, this,
+						   base_iter.len (),
+						   base_indexes.iter ()));
   }
 };
 

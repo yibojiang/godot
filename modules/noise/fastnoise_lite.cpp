@@ -30,6 +30,8 @@
 
 #include "fastnoise_lite.h"
 
+#include "core/config/engine.h"
+
 _FastNoiseLite::FractalType FastNoiseLite::_convert_domain_warp_fractal_type_enum(DomainWarpFractalType p_domain_warp_fractal_type) {
 	_FastNoiseLite::FractalType type;
 	switch (p_domain_warp_fractal_type) {
@@ -416,8 +418,8 @@ void FastNoiseLite::_bind_methods() {
 
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "noise_type", PROPERTY_HINT_ENUM, "Simplex,Simplex Smooth,Cellular,Perlin,Value Cubic,Value"), "set_noise_type", "get_noise_type");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "seed"), "set_seed", "get_seed");
-	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "frequency", PROPERTY_HINT_RANGE, ".0001,1,.0001"), "set_frequency", "get_frequency");
-	ADD_PROPERTY(PropertyInfo(Variant::VECTOR3, "offset", PROPERTY_HINT_RANGE, "-999999999,999999999,0.01"), "set_offset", "get_offset");
+	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "frequency", PROPERTY_HINT_RANGE, ".0001,1,.0001,exp"), "set_frequency", "get_frequency");
+	ADD_PROPERTY(PropertyInfo(Variant::VECTOR3, "offset", PROPERTY_HINT_RANGE, "-1000,1000,0.01,or_less,or_greater"), "set_offset", "get_offset");
 
 	ADD_GROUP("Fractal", "fractal_");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "fractal_type", PROPERTY_HINT_ENUM, "None,FBM,Ridged,Ping-Pong"), "set_fractal_type", "get_fractal_type");
@@ -477,6 +479,9 @@ void FastNoiseLite::_bind_methods() {
 }
 
 void FastNoiseLite::_validate_property(PropertyInfo &p_property) const {
+	if (!Engine::get_singleton()->is_editor_hint()) {
+		return;
+	}
 	if (p_property.name.begins_with("cellular") && get_noise_type() != TYPE_CELLULAR) {
 		p_property.usage = PROPERTY_USAGE_NO_EDITOR;
 		return;

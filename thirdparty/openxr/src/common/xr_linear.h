@@ -1,5 +1,5 @@
-// Copyright (c) 2017 The Khronos Group Inc.
-// Copyright (c) 2016 Oculus VR, LLC.
+// Copyright (c) 2017-2025 The Khronos Group Inc.
+// Copyright (c) 2016, Oculus VR, LLC.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -23,15 +23,17 @@
 
 #include <openxr/openxr.h>
 
+/* REUSE-IgnoreStart */
+/* The following has copyright notices that duplicate the header above */
+
 /*
 ================================================================================================
 
-Description     :       Vector, matrix and quaternion math.
-Author          :       J.M.P. van Waveren
-Date            :       12/10/2016
-Language        :       C99
-Format          :       Indent 4 spaces - no tabs.
-Copyright       :       Copyright (c) 2016 Oculus VR, LLC. All Rights reserved.
+Description  : Vector, matrix and quaternion math.
+Orig. Author : J.M.P. van Waveren
+Orig. Date   : 12/10/2016
+Language     : C99
+Copyright    : Copyright (c) 2016 Oculus VR, LLC. All Rights reserved.
 
 
 DESCRIPTION
@@ -132,7 +134,7 @@ static const XrColor4f XrColorCyan = {0.0f, 1.0f, 1.0f, 1.0f};
 static const XrColor4f XrColorLightGrey = {0.7f, 0.7f, 0.7f, 1.0f};
 static const XrColor4f XrColorDarkGrey = {0.3f, 0.3f, 0.3f, 1.0f};
 
-typedef enum GraphicsAPI { GRAPHICS_VULKAN, GRAPHICS_OPENGL, GRAPHICS_OPENGL_ES, GRAPHICS_D3D } GraphicsAPI;
+typedef enum GraphicsAPI { GRAPHICS_VULKAN, GRAPHICS_OPENGL, GRAPHICS_OPENGL_ES, GRAPHICS_D3D, GRAPHICS_METAL } GraphicsAPI;
 
 // Column-major, pre-multiplied. This type does not exist in the OpenXR API and is provided for convenience.
 typedef struct XrMatrix4x4f {
@@ -144,6 +146,8 @@ inline static float XrRcpSqrt(const float x) {
     const float rcp = (x >= SMALLEST_NON_DENORMAL) ? 1.0f / sqrtf(x) : 1.0f;
     return rcp;
 }
+
+inline static float XrVector2f_Length(const XrVector2f* v) { return sqrtf(v->x * v->x + v->y * v->y); }
 
 inline static void XrVector3f_Set(XrVector3f* v, const float value) {
     v->x = value;
